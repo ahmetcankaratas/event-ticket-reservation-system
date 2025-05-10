@@ -1,0 +1,54 @@
+PROJECT TOPIC: ONLINE EVENT TICKET RESERVATION SYSTEM
+PROJECT OBJECTIVE:
+Develop an object oriented software application that allows users to search, reserve, and track
+event tickets.
+The application may be developed as a:
+• Console application,
+FUNCTIONAL REQUIREMENTS
+1. Firm Operations
+o Firms can create new events and define ticket details:
+▪ Event name, date, location
+▪ Ticket categories (e.g., VIP, Regular)
+▪ Price per category
+▪ Number of tickets available
+o Event types must include concert, and at least two others (e.g., sports, theatre).
+o Ticket prices can differ by category within the same event.
+2. User Operations
+o Users can search for tickets by specifying a time interval.
+o The search results should display:
+▪ Event date, location, ticket prices, number of available tickets
+o Users can reserve tickets:
+▪ If signed in with an account:
+▪ Can view current and past reservations
+▪ If not signed in:
+▪ Can still reserve tickets
+▪ A unique reservation number will be provided to track the
+reservation
+o On successful reservation, generate and show a unique reservation number
+3. Data Persistence
+o All data (e.g., users, events, reservations) must be persistently stored using:
+▪ Local files (text or binary files), or
+▪ A database (e.g., MySQL)
+DELIVERABLES
+1. Project Implementation
+• A complete, working application developed using object-oriented software design
+principles that satisfies all functional requirements. (Using Java is encouraged, but you
+may choose any programming language.)
+2. Project Report (PDF)
+The report should include:
+• Team Contributions Table
+A clear contribution table showing what each member worked on.
+• Usage Scenarios
+Describe 3–4 typical scenarios of using the software Include relevant screenshots.
+• UML Class Diagram
+Show all major class definitions as UML class diagram.
+• Explanation of Inheritance
+Describe inheritance hierarchies used in the system.
+• Explanation of Polymorphism
+Explain where polymorphism is applied and why it is beneficial.
+• Explanation of Data Persistence
+Describe how data is stored and retrieved.
+Mention the chosen method (files or database) and how it's used in your application.
+3. Demo Presentation
+Each team will give a short live demonstration of their project.
+The demo date will be announced later
