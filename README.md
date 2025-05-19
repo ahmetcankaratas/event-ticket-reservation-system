@@ -25,6 +25,7 @@ This is a Java-based online event ticket reservation system that allows users to
 ## Screenshots
 - Make reservations (without account)
 <img width="769" alt="Screenshot 2025-05-19 at 13 06 54" src="https://github.com/user-attachments/assets/aa691302-cd5f-4f71-b3a6-6cb3c625755d" />
+</br>
 - View reservation history (for registered user)
 <img width="757" alt="Screenshot 2025-05-19 at 13 06 22" src="https://github.com/user-attachments/assets/b7780a43-8af6-48c9-9184-64f5bfddd1ab" />
 
