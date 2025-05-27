@@ -6,7 +6,7 @@
 |-------------|--------------|
 | Barış Yenigül | Implemented Firm Operations including event creation, ticket category management, and event type handling |
 | Ahmet Can Karataş | Implemented User Operations including ticket search, reservation system, and user account management |
-| Erhan Alasar | Implemented Data Persistence using MySQL database with repository pattern |
+| Erhan Alasar | Implemented Data Persistence using PostgreSQL database with repository pattern |
 
 ## Usage Scenarios
 
@@ -152,7 +152,7 @@ Benefits:
 
 ## Explanation of Data Persistence
 
-The system uses MySQL database for data persistence with the following implementation:
+The system uses PostgreSQL database for data persistence with the following implementation:
 
 1. Database Structure
    - Tables: users, events, ticket_categories, reservations
