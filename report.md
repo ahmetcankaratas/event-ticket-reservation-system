@@ -14,30 +14,32 @@
 1. A firm representative logs into the system
 2. Navigates to the event creation section
 3. Enters event details:
-   - Event name: "Summer Concert 2024"
-   - Date: June 15, 2024
-   - Location: "Central Park"
+   - Event name: "Drake Concert"
+   - Date: August 12, 2025
+   - Location: "Los Angeles CA, USA"
    - Type: Concert
 4. Creates ticket categories:
-   - VIP: $200 (100 tickets)
-   - Regular: $100 (500 tickets)
+   - VIP: $300.99 (150 tickets)
+   - Regular: $100.99 (500 tickets)
 5. System confirms event creation and displays event ID
+<img width="1792" alt="createEvent" src="https://github.com/user-attachments/assets/98afb714-c8c3-45c0-aec3-e6dbdb5378d0" />
 
 ### Scenario 2: Searching and Reserving Tickets
-1. User searches for events between June 1-30, 2024
+1. User searches for events between July 7- August 29, 2025
 2. System displays available events with details
-3. User selects "Summer Concert 2024"
+3. User selects "Drake Concert"
 4. Views available ticket categories and prices
-5. Selects 2 Regular tickets
+5. Selects 10 Regular tickets
 6. System generates a unique reservation number
 7. User receives confirmation with reservation details
+<img width="1792" alt="searchEvents" src="https://github.com/user-attachments/assets/c3dc97af-6bf4-45b3-8700-a72c62f10a2f" />
+<img width="1792" alt="makeReservation" src="https://github.com/user-attachments/assets/ef06d178-5746-4840-8ce6-1fbe23fcd6e0" />
 
 ### Scenario 3: Managing User Reservations
 1. User logs into their account
-2. Navigates to "My Reservations"
-3. Views current and past reservations
-4. Can cancel active reservations
-5. System updates ticket availability automatically
+2. Views current and past reservations
+3. System updates ticket availability automatically
+<img width="1792" alt="viewMyReservations" src="https://github.com/user-attachments/assets/48847289-a4ce-4e27-97e8-e77d73cef543" />
 
 ## UML Class Diagram
 
@@ -147,44 +149,11 @@ Polymorphism is applied in several areas:
    - System can handle different event types uniformly
    - Easy to add new event types without changing existing code
 
-3. Reservation Status
-   - Different reservation statuses are handled polymorphically
-   - Status changes trigger appropriate business logic
-   - System can be extended with new status types
-
-
-4. Ticket Category Management
-   - Different ticket categories can be handled uniformly
-   - Price calculations and availability checks are polymorphic
-
-```java
-public class TicketCategory {
-    private String name;
-    private double price;
-    private int availableTickets;
-    
-    public boolean reserveTickets(int quantity) {
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be positive");
-        }
-        if (quantity > availableTickets) {
-            return false;
-        }
-        availableTickets -= quantity;
-        return true;
-    }
-    
-    public double calculateTotalPrice(int quantity) {
-        return price * quantity;
-    }
-}
-```
 
 Benefits:
 - Flexible and extensible code
 - Reduced coupling between components
 - Easy maintenance and updates
-- Consistent behavior across different implementations
 
 ## Explanation of Data Persistence
 
@@ -193,23 +162,14 @@ The system uses PostgreSQL database for data persistence with the following impl
 1. Database Structure
    - Tables: users, events, ticket_categories, reservations
    - Relationships maintained through foreign keys
-   - Proper indexing for performance
 
 2. Repository Pattern Implementation
    - Each entity has its own repository class
    - Repositories handle all database operations
-   - Connection management and transaction handling
 
 3. Data Operations
    - CRUD operations for all entities
-   - Complex queries for business operations
-   - Transaction management for data integrity
 
-4. Key Features
-   - Connection pooling for performance
-   - Prepared statements for security
-   - Error handling and logging
-   - Transaction management for data consistency
 
 Example of transaction management:
 ```java
