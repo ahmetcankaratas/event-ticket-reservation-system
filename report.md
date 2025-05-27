@@ -152,15 +152,129 @@ Polymorphism is applied in several areas:
    - Different implementations can be swapped without changing client code
    - Example: `UserRepository` implements `IUserRepository`
 
+```java
+// Base interface
+public interface IRepository<T, ID> {
+    void save(T obj);
+    Optional<T> findById(ID id);
+    List<T> findAll();
+}
+
+// Specialized interface
+public interface IUserRepository<T, ID> extends IRepository<T, ID> {
+    Optional<T> findByUsername(String username);
+}
+
+// Implementation
+public class UserRepository implements IUserRepository<User, UUID> {
+    @Override
+    public Optional<User> findByUsername(String username) {
+        String sql = "SELECT * FROM users WHERE username = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return Optional.of(new User(
+                    rs.getObject("user_id", UUID.class),
+                    username,
+                    rs.getString("password"),
+                    rs.getString("role")
+                ));
+            }
+        }
+        return Optional.empty();
+    }
+}
+```
+
 2. Event Types
    - `EventType` enum allows for different event categories
    - System can handle different event types uniformly
    - Easy to add new event types without changing existing code
 
+```java
+public enum EventType {
+    CONCERT,
+    SPORTS,
+    THEATRE
+}
+
+// Usage in Event class
+public class Event {
+    private EventType type;
+    
+    public boolean isConcert() {
+        return type == EventType.CONCERT;
+    }
+    
+    public boolean isSports() {
+        return type == EventType.SPORTS;
+    }
+    
+    public double calculateBasePrice() {
+        return switch (type) {
+            case CONCERT -> 100.0;
+            case SPORTS -> 80.0;
+            case THEATRE -> 60.0;
+        };
+    }
+}
+```
+
 3. Reservation Status
-   - Different reservation statuses (CONFIRMED, CANCELLED) are handled polymorphically
+   - Different reservation statuses are handled polymorphically
    - Status changes trigger appropriate business logic
    - System can be extended with new status types
+
+```java
+public class Reservation {
+    private String status;
+    
+    public boolean cancelReservation() {
+        if ("CANCELLED".equals(status)) {
+            return false;
+        }
+        status = "CANCELLED";
+        category.updateAvailability(category.getAvailableTickets() + quantity);
+        return true;
+    }
+    
+    public boolean isActive() {
+        return "CONFIRMED".equals(status);
+    }
+    
+    public boolean isCancelled() {
+        return "CANCELLED".equals(status);
+    }
+}
+```
+
+4. Ticket Category Management
+   - Different ticket categories can be handled uniformly
+   - Price calculations and availability checks are polymorphic
+
+```java
+public class TicketCategory {
+    private String name;
+    private double price;
+    private int availableTickets;
+    
+    public boolean reserveTickets(int quantity) {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
+        }
+        if (quantity > availableTickets) {
+            return false;
+        }
+        availableTickets -= quantity;
+        return true;
+    }
+    
+    public double calculateTotalPrice(int quantity) {
+        return price * quantity;
+    }
+}
+```
 
 Benefits:
 - Flexible and extensible code
