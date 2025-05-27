@@ -43,68 +43,7 @@
 
 ## UML Class Diagram
 
-```mermaid
-classDiagram
-    class Event {
-        -UUID eventId
-        -String name
-        -LocalDateTime date
-        -String location
-        -EventType type
-        -User organizer
-        -List~TicketCategory~ categories
-        +addTicketCategory()
-        +removeTicketCategory()
-        +getAvailableTickets()
-    }
-
-    class TicketCategory {
-        -UUID categoryId
-        -Event event
-        -String name
-        -double price
-        -int availableTickets
-        +updatePrice()
-        +updateAvailability()
-        +reserveTickets()
-    }
-
-    class User {
-        -UUID userId
-        -String username
-        -String password
-        -String role
-        -List~Reservation~ reservations
-        +addReservation()
-        +getCurrentReservations()
-        +getPastReservations()
-    }
-
-    class Reservation {
-        -UUID reservationId
-        -Event event
-        -TicketCategory category
-        -int quantity
-        -LocalDateTime reservationDate
-        -String status
-        -UUID userId
-        +generateReservationNumber()
-        +cancelReservation()
-    }
-
-    class EventType {
-        <<enumeration>>
-        CONCERT
-        SPORTS
-        THEATRE
-    }
-
-    Event "1" -- "many" TicketCategory
-    Event "1" -- "1" EventType
-    User "1" -- "many" Reservation
-    Reservation "1" -- "1" Event
-    Reservation "1" -- "1" TicketCategory
-```
+![Screenshot 2025-05-27 at 15 19 07](https://github.com/user-attachments/assets/6604dd6e-4045-4774-8f58-d8802a9bd39f)
 
 ## Explanation of Inheritance
 
