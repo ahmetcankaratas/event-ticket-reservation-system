@@ -113,11 +113,29 @@ The system implements inheritance through the repository pattern:
    - Generic type parameters for entity type and ID type
    - Implemented by all specific repositories
 
+```java
+public interface IRepository<T, ID> {
+    void save(T obj);
+    Optional<T> findById(ID id);
+    List<T> findAll();
+    void deleteById(ID id);
+    void update(ID id, T newObj);
+}
+```
+
 2. Specialized Repository Interfaces
    - `IEventRepository`: Extends `IRepository` with event-specific queries
    - `IUserRepository`: Extends `IRepository` with user-specific queries
    - `IReservationRepository`: Extends `IRepository` with reservation-specific queries
    - `ITicketCategoryRepository`: Extends `IRepository` with ticket category-specific queries
+
+Example of a specialized repository interface:
+```java
+public interface IEventRepository<T, ID> extends IRepository<T, ID> {
+    List<T> findEventsByTimeInterval(LocalDateTime startDate, LocalDateTime endDate);
+    List<T> findEventsByOrganizer(UUID organizerId);
+}
+```
 
 This inheritance hierarchy allows for:
 - Code reuse across repositories
@@ -164,10 +182,58 @@ The system uses PostgreSQL database for data persistence with the following impl
    - Repositories handle all database operations
    - Connection management and transaction handling
 
+Example of a repository implementation:
+```java
+public class EventRepository implements IEventRepository<Event, UUID> {
+    private final Connection connection;
+    private final UserRepository userRepository;
+
+    public EventRepository(Connection connection, UserRepository userRepository) {
+        this.connection = connection;
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public void save(Event obj) {
+        String sql = "INSERT INTO events (event_id, name, event_date, location, organizer_id, event_type) VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            connection.setAutoCommit(false);
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setObject(1, obj.getEventId());
+                stmt.setString(2, obj.getName());
+                stmt.setTimestamp(3, Timestamp.valueOf(obj.getDate()));
+                stmt.setString(4, obj.getLocation());
+                stmt.setObject(5, obj.getOrganizer().getUserId());
+                stmt.setString(6, obj.getType().name());
+                stmt.executeUpdate();
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
 3. Data Operations
    - CRUD operations for all entities
    - Complex queries for business operations
    - Transaction management for data integrity
+
+Example of a complex query:
+```java
+public List<Event> findEventsByTimeInterval(LocalDateTime startDate, LocalDateTime endDate) {
+    List<Event> events = new ArrayList<>();
+    String sql = "SELECT * FROM events WHERE event_date >= ? AND event_date <= ?";
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setTimestamp(1, Timestamp.valueOf(startDate));
+        stmt.setTimestamp(2, Timestamp.valueOf(endDate));
+        ResultSet rs = stmt.executeQuery();
+        // Process results...
+    }
+    return events;
+}
+```
 
 4. Key Features
    - Connection pooling for performance
@@ -175,18 +241,23 @@ The system uses PostgreSQL database for data persistence with the following impl
    - Error handling and logging
    - Transaction management for data consistency
 
-Example of data persistence in `UserRepository`:
+Example of transaction management:
 ```java
-public void save(User obj) {
-    String sql = "INSERT INTO users (user_id, username, password, role) VALUES (?,?,?,?)";
-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setObject(1, obj.getUserId());
-        stmt.setString(2, obj.getUsername());
-        stmt.setString(3, obj.getPassword());
-        stmt.setString(4, obj.getRole());
-        stmt.executeUpdate();
+public void save(Reservation obj) {
+    String sql = "INSERT INTO reservations (reservation_id, event_id, category_id, quantity, reservation_date, status, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    try {
+        connection.setAutoCommit(false);  // Start transaction
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            // Set parameters and execute
+            stmt.executeUpdate();
+            connection.commit();  // Commit transaction
+        }
     } catch (SQLException e) {
-        throw new RuntimeException(e);
+        try {
+            connection.rollback();  // Rollback on error
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }
 ``` 
