@@ -152,7 +152,7 @@ public class TicketReservationAPI {
         }
 
         Event selectedEvent = events.get(eventChoice - 1);
-        List<TicketCategory> categories = selectedEvent.getAvailableTickets();
+        List<TicketCategory> categories = ticketCategoryRepository.findAllByEvent(selectedEvent.getEventId());
 
         System.out.println("Select ticket category (enter category number):");
         for (int i = 0; i < categories.size(); i++) {
@@ -394,6 +394,7 @@ public class TicketReservationAPI {
                 switch (choice) {
                     case 1:
                         createEvent();
+                        break;
                     case 2:
                         addTicketCategoryToAnEvent();
                         break;

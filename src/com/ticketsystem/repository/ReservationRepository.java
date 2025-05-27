@@ -113,7 +113,35 @@ public class ReservationRepository implements IReservationRepository<Reservation
 
     @Override
     public void update(UUID s, Reservation newObj) {
+        String sql = "UPDATE reservations SET " +
+                "event_id = ?, " +
+                "category_id = ?, " +
+                "quantity = ?, " +
+                "reservation_date = ?, " +
+                "status = ?, " +
+                "user_id = ? " +
+                "WHERE reservation_id = ?";
 
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, newObj.getEvent().getEventId());
+            stmt.setObject(2, newObj.getCategory().getCategoryId());
+            stmt.setInt(3, newObj.getQuantity());
+            stmt.setTimestamp(4, Timestamp.valueOf(newObj.getReservationDate()));
+            stmt.setString(5, newObj.getStatus());
+            if (newObj.getUserId() != null) {
+                stmt.setObject(6, newObj.getUserId());
+            } else {
+                stmt.setNull(6, Types.OTHER); // PostgreSQL UUID için
+            }
+            stmt.setObject(7, s); // reservation_id (WHERE koşulu)
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new RuntimeException("No reservation found with ID: " + s);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update reservation with ID: " + s, e);
+        }
     }
 
     @Override
@@ -145,12 +173,11 @@ public class ReservationRepository implements IReservationRepository<Reservation
                         organizerOpt.orElse(null)
                 );
 
-                // You can create a TicketCategory object similarly if needed
+
                 TicketCategory category = new TicketCategory(
                         rs.getObject("category_id", UUID.class),
                         rs.getString("category_name"),
-                        rs.getDouble("price"),
-                        rs.getInt("available_tickets")
+                        rs.getDouble("price")
                 );
 
                 Reservation reservation = new Reservation(

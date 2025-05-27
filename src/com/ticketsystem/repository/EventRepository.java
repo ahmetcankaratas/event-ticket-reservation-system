@@ -82,6 +82,7 @@ public class EventRepository implements IEventRepository<Event, UUID> {
 
                 }
                 Event event = new Event(
+                        rs.getObject("event_id", UUID.class),
                         rs.getString("name"),
                         rs.getTimestamp("event_date").toLocalDateTime(),
                         rs.getString("location"),

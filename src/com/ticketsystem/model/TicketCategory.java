@@ -20,12 +20,10 @@ public class TicketCategory {
         this.availableTickets = availableTickets;
     }
 
-    public TicketCategory(UUID categoryId, Event event, String name, double price, int availableTickets) {
+    public TicketCategory(UUID categoryId, String name, double price) {
         this.categoryId = categoryId;
-        this.event = event;
         this.name = name;
         this.price = price;
-        this.availableTickets = availableTickets;
     }
 
     public TicketCategory(UUID categoryId, String name, double price, int availableTickets) {

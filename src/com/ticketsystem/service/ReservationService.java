@@ -30,9 +30,7 @@ public class ReservationService {
             throw new IllegalArgumentException("Event not found");
         }
 
-        Optional<TicketCategory> category = event.getCategories().stream()
-                .filter(c -> c.getCategoryId().equals(categoryId))
-                .findFirst();
+        Optional<TicketCategory> category = ticketCategoryRepository.findById(categoryId);
 
         if (category.isEmpty()) {
             throw new IllegalArgumentException("Ticket category not found");
@@ -44,6 +42,7 @@ public class ReservationService {
 
         Reservation reservation = new Reservation(event, category.get(), quantity, userId);
         reservationRepository.save(reservation);
+        ticketCategoryRepository.update(categoryId, category.get());
         return reservation;
     }
 
