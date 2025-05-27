@@ -9,21 +9,34 @@ import java.util.UUID;
  * Represents an event in the ticket reservation system.
  */
 public class Event {
-    private String eventId;
+    private UUID eventId;
     private String name;
     private LocalDateTime date;
     private String location;
     private EventType type;
+    private User organizer;
     private List<TicketCategory> categories;
 
-    public Event(String name, LocalDateTime date, String location, EventType type) {
-        this.eventId = UUID.randomUUID().toString();
+    public Event(String name, LocalDateTime date, String location, EventType type, User organizer) {
+        this.eventId = UUID.randomUUID();
         this.name = name;
         this.date = date;
         this.location = location;
         this.type = type;
+        this.organizer = organizer;
         this.categories = new ArrayList<>();
     }
+
+    public Event(UUID eventId, String name, LocalDateTime date, String location, EventType type, User organizer) {
+        this.eventId = eventId;
+        this.name = name;
+        this.date = date;
+        this.location = location;
+        this.type = type;
+        this.organizer = organizer;
+    }
+
+
 
     public void addTicketCategory(TicketCategory category) {
         categories.add(category);
@@ -40,7 +53,7 @@ public class Event {
     }
 
     // Getters and Setters
-    public String getEventId() {
+    public UUID getEventId() {
         return eventId;
     }
 
@@ -66,6 +79,14 @@ public class Event {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public User getOrganizer() {
+        return organizer;
+    }
+
+    public void setOrganizer(User organizer) {
+        this.organizer = organizer;
     }
 
     public EventType getType() {

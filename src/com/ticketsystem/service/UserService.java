@@ -1,54 +1,57 @@
 package com.ticketsystem.service;
 
 import com.ticketsystem.model.User;
-import java.util.ArrayList;
+import com.ticketsystem.repository.UserRepository;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service class to handle user-related operations.
  */
 public class UserService {
-    private List<User> users;
+    private final UserRepository userRepository;
 
-    public UserService() {
-        this.users = new ArrayList<>();
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public User registerUser(String username, String password) {
+    public User registerUser(String username, String password, String role) {
         if (getUserByUsername(username).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
 
-        User user = new User(username, password);
-        users.add(user);
+        User user = new User(username, password, role);
+        userRepository.save(user);
         return user;
     }
 
     public Optional<User> login(String username, String password) {
-        return users.stream()
-                .filter(user -> user.getUsername().equals(username) && user.verifyPassword(password))
-                .findFirst();
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+
+        if (optionalUser.isPresent() && optionalUser.get().verifyPassword(password)) {
+            return optionalUser;
+        }
+
+        else {
+            return Optional.empty();
+        }
     }
 
     public Optional<User> getUserByUsername(String username) {
-        return users.stream()
-                .filter(user -> user.getUsername().equals(username))
-                .findFirst();
+        return userRepository.findByUsername(username);
     }
 
-    public User getUserById(String userId) {
-        return users.stream()
-                .filter(user -> user.getUserId().equals(userId))
-                .findFirst()
-                .orElse(null);
+    public User getUserById(UUID userId) {
+        return userRepository.findById(userId).orElse(null);
     }
 
     public List<User> getAllUsers() {
-        return new ArrayList<>(users);
+        return userRepository.findAll();
     }
 
-    public boolean updatePassword(String userId, String oldPassword, String newPassword) {
+    public boolean updatePassword(UUID userId, String oldPassword, String newPassword) {
         User user = getUserById(userId);
         if (user != null && user.verifyPassword(oldPassword)) {
             user.setPassword(newPassword);
