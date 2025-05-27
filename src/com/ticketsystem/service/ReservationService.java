@@ -3,23 +3,28 @@ package com.ticketsystem.service;
 import com.ticketsystem.model.Event;
 import com.ticketsystem.model.Reservation;
 import com.ticketsystem.model.TicketCategory;
-import java.util.ArrayList;
+import com.ticketsystem.repository.ReservationRepository;
+import com.ticketsystem.repository.TicketCategoryRepository;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service class to handle reservation-related operations.
  */
 public class ReservationService {
-    private List<Reservation> reservations;
-    private EventService eventService;
+    private final EventService eventService;
+    private final ReservationRepository reservationRepository;
+    private final TicketCategoryRepository ticketCategoryRepository;
 
-    public ReservationService(EventService eventService) {
-        this.reservations = new ArrayList<>();
+    public ReservationService(EventService eventService, ReservationRepository reservationRepository, TicketCategoryRepository ticketCategoryRepository) {
         this.eventService = eventService;
+        this.reservationRepository = reservationRepository;
+        this.ticketCategoryRepository = ticketCategoryRepository;
     }
 
-    public Reservation createReservation(String eventId, String categoryId, int quantity, String userId) {
+    public Reservation createReservation(UUID eventId, UUID categoryId, int quantity, UUID userId) {
         Event event = eventService.getEventById(eventId);
         if (event == null) {
             throw new IllegalArgumentException("Event not found");
@@ -38,32 +43,30 @@ public class ReservationService {
         }
 
         Reservation reservation = new Reservation(event, category.get(), quantity, userId);
-        reservations.add(reservation);
+        reservationRepository.save(reservation);
         return reservation;
     }
 
-    public Reservation getReservationById(String reservationId) {
-        return reservations.stream()
-                .filter(reservation -> reservation.getReservationId().equals(reservationId))
-                .findFirst()
-                .orElse(null);
+    public Reservation getReservationById(UUID reservationId) {
+        return reservationRepository.findById(reservationId).orElse(null);
     }
 
-    public List<Reservation> getReservationsByUserId(String userId) {
-        return reservations.stream()
-                .filter(reservation -> userId.equals(reservation.getUserId()))
-                .toList();
+    public List<Reservation> getReservationsByUserId(UUID userId) {
+        return reservationRepository.findAllByUser(userId);
     }
 
-    public boolean cancelReservation(String reservationId) {
+    public void cancelReservation(UUID reservationId) {
         Reservation reservation = getReservationById(reservationId);
         if (reservation == null) {
-            return false;
+            return;
         }
-        return reservation.cancelReservation();
+
+        reservation.cancelReservation();
+        reservationRepository.update(reservationId, reservation);
+        ticketCategoryRepository.update(reservation.getCategory().getCategoryId(), reservation.getCategory());
     }
 
     public List<Reservation> getAllReservations() {
-        return new ArrayList<>(reservations);
+        return reservationRepository.findAll();
     }
 } 

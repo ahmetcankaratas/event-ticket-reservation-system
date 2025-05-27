@@ -2,39 +2,40 @@ package com.ticketsystem.service;
 
 import com.ticketsystem.model.Event;
 import com.ticketsystem.model.TicketCategory;
+import com.ticketsystem.repository.EventRepository;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 /**
  * Service class to handle event-related operations.
  */
 public class EventService {
-    private List<Event> events;
+    private final EventRepository eventRepository;
 
-    public EventService() {
-        this.events = new ArrayList<>();
+    public EventService(EventRepository eventRepository) {
+        this.eventRepository = eventRepository;
     }
 
     public void addEvent(Event event) {
-        events.add(event);
+        eventRepository.save(event);
     }
 
     public List<Event> searchEventsByTimeInterval(LocalDateTime start, LocalDateTime end) {
-        return events.stream()
-                .filter(event -> !event.getDate().isBefore(start) && !event.getDate().isAfter(end))
-                .collect(Collectors.toList());
+        return eventRepository.findEventsByTimeInterval(start, end);
     }
 
-    public Event getEventById(String eventId) {
-        return events.stream()
-                .filter(event -> event.getEventId().equals(eventId))
-                .findFirst()
-                .orElse(null);
+    public Event getEventById(UUID eventId) {
+        return eventRepository.findById(eventId).orElse(null);
     }
 
-    public List<TicketCategory> getAvailableTicketsForEvent(String eventId) {
+    public List<Event> getEventsByOrganizer(UUID organizerId) {
+        return eventRepository.findEventsByOrganizer(organizerId);
+    }
+
+    public List<TicketCategory> getAvailableTicketsForEvent(UUID eventId) {
         Event event = getEventById(eventId);
         if (event == null) {
             return new ArrayList<>();
@@ -42,11 +43,11 @@ public class EventService {
         return event.getAvailableTickets();
     }
 
-    public boolean removeEvent(String eventId) {
-        return events.removeIf(event -> event.getEventId().equals(eventId));
+    public void removeEvent(UUID eventId) {
+        eventRepository.deleteById(eventId);
     }
 
     public List<Event> getAllEvents() {
-        return new ArrayList<>(events);
+        return eventRepository.findAll();
     }
 } 

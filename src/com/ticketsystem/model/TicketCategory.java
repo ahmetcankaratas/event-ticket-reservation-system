@@ -1,15 +1,34 @@
 package com.ticketsystem.model;
 
+import java.util.UUID;
+
 /**
  * Represents a ticket category with its properties and operations.
  */
 public class TicketCategory {
-    private String categoryId;
+    private UUID categoryId;
+    private Event event;
     private String name;
     private double price;
     private int availableTickets;
 
-    public TicketCategory(String categoryId, String name, double price, int availableTickets) {
+    public TicketCategory(String name, Event event, double price, int availableTickets) {
+        this.categoryId = UUID.randomUUID();
+        this.event = event;
+        this.name = name;
+        this.price = price;
+        this.availableTickets = availableTickets;
+    }
+
+    public TicketCategory(UUID categoryId, Event event, String name, double price, int availableTickets) {
+        this.categoryId = categoryId;
+        this.event = event;
+        this.name = name;
+        this.price = price;
+        this.availableTickets = availableTickets;
+    }
+
+    public TicketCategory(UUID categoryId, String name, double price, int availableTickets) {
         this.categoryId = categoryId;
         this.name = name;
         this.price = price;
@@ -41,8 +60,16 @@ public class TicketCategory {
         return true;
     }
 
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
     // Getters and Setters
-    public String getCategoryId() {
+    public UUID getCategoryId() {
         return categoryId;
     }
 

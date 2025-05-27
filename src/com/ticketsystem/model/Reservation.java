@@ -7,16 +7,16 @@ import java.util.UUID;
  * Represents a ticket reservation in the system.
  */
 public class Reservation {
-    private String reservationId;
+    private UUID reservationId;
     private Event event;
     private TicketCategory category;
     private int quantity;
     private LocalDateTime reservationDate;
     private String status;
-    private String userId; // Can be null for anonymous reservations
+    private UUID userId; // Can be null for anonymous reservations
 
-    public Reservation(Event event, TicketCategory category, int quantity, String userId) {
-        this.reservationId = UUID.randomUUID().toString();
+    public Reservation(Event event, TicketCategory category, int quantity, UUID userId) {
+        this.reservationId = UUID.randomUUID();
         this.event = event;
         this.category = category;
         this.quantity = quantity;
@@ -25,9 +25,19 @@ public class Reservation {
         this.userId = userId;
     }
 
+    public Reservation(UUID reservationId, Event event, TicketCategory category, int quantity, LocalDateTime reservationDate, String status, UUID userId) {
+        this.reservationId = reservationId;
+        this.event = event;
+        this.category = category;
+        this.quantity = quantity;
+        this.reservationDate = reservationDate;
+        this.status = status;
+        this.userId = userId;
+    }
+
     public String generateReservationNumber() {
         // Format: First 8 characters of reservationId
-        return reservationId.substring(0, 8).toUpperCase();
+        return reservationId.toString().substring(0, 8).toUpperCase();
     }
 
     public boolean cancelReservation() {
@@ -40,7 +50,7 @@ public class Reservation {
     }
 
     // Getters
-    public String getReservationId() {
+    public UUID getReservationId() {
         return reservationId;
     }
 
@@ -64,7 +74,7 @@ public class Reservation {
         return status;
     }
 
-    public String getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
