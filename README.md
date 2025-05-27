@@ -15,7 +15,7 @@ This is a Java-based online event ticket reservation system that allows users to
   - View event details (date, location, prices, availability)
   - Make reservations (with or without account)
   - Track reservations using unique numbers
-  - View reservation history (for registered users)
+  - View reservation history (for registered users).
   
 
 - **Data Persistence**
